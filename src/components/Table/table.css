@@ -33,6 +33,6 @@ td input[type="text"] {
   border: 1px solid grey;
   border-radius: 20px;
   outline: none;
-  font-size: 1rem;
+  font-size: 0.8rem;
   width: 90%;
 }

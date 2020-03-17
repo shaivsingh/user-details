@@ -16,14 +16,27 @@ export default function Table(props) {
             <th>{headings[2]}</th>
             <th>{headings[3]}</th>
             <th>{headings[5]}</th>
-            <th>Action</th>
+            <th>
+              Action
+              <button
+                style={{
+                  marginLeft: "20px",
+                  borderRadius: "20px",
+                  outline: "none"
+                }}
+                id="sortBtn"
+                onClick={props.handleSort}
+              >
+                Sort
+              </button>
+            </th>
           </tr>
           {data.map((ele, ind) => {
             return (
               <tr key={ele.id}>
                 <td>{ele.id}</td>
                 <td>
-                  {ind === parseInt(props.editable) ? (
+                  {ele.id === parseInt(props.editable) ? (
                     <input
                       type="text"
                       id="newName"
@@ -36,7 +49,7 @@ export default function Table(props) {
                   )}
                 </td>
                 <td>
-                  {ind === parseInt(props.editable) ? (
+                  {ele.id === parseInt(props.editable) ? (
                     <input
                       type="text"
                       id="newUsername"
@@ -49,7 +62,7 @@ export default function Table(props) {
                   )}
                 </td>
                 <td>
-                  {ind === parseInt(props.editable) ? (
+                  {ele.id === parseInt(props.editable) ? (
                     <input
                       type="text"
                       id="newEmail"
@@ -62,7 +75,7 @@ export default function Table(props) {
                   )}
                 </td>
                 <td>
-                  {ind === parseInt(props.editable) ? (
+                  {ele.id === parseInt(props.editable) ? (
                     <input
                       type="text"
                       id="newPhone"
@@ -76,8 +89,10 @@ export default function Table(props) {
                 <td>
                   <input
                     type="button"
-                    id={ind}
-                    value={ind === parseInt(props.editable) ? "save" : "edit"}
+                    id={ele.id}
+                    value={
+                      ele.id === parseInt(props.editable) ? "save" : "edit"
+                    }
                     onClick={props.handleEdit}
                     style={{
                       backgroundImage: "linear-gradient(white,blue)",
@@ -86,12 +101,30 @@ export default function Table(props) {
                   />
                   <input
                     type="button"
-                    id={ind}
+                    id={ele.id}
+                    value="X"
+                    onClick={props.handleEdit}
+                    style={{
+                      backgroundImage: "linear-gradient(red,black)",
+                      color: "white",
+                      display:
+                        ele.id === parseInt(props.editable)
+                          ? "inline-block"
+                          : "none"
+                    }}
+                  />
+                  <input
+                    type="button"
+                    id={ele.id}
                     value="remove"
                     onClick={props.handleDelete}
                     style={{
                       backgroundImage: "linear-gradient(white,red)",
-                      color: "black"
+                      color: "black",
+                      display:
+                        ele.id === parseInt(props.editable)
+                          ? "none"
+                          : "inline-block"
                     }}
                   />
                 </td>
