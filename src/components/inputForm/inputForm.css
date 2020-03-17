@@ -1,0 +1,20 @@
+#addDetails > input {
+  margin-left: 10px;
+  padding: 10.5px 14px;
+  border: 1px solid grey;
+  box-sizing: content-box;
+  border-radius: 20px;
+  outline: none;
+}
+#add{
+    background-color: black;
+    color: white;
+    padding: 0;
+    width: 80px;
+    font-size: 14px;
+}
+#add:hover{
+background-color: green;
+color: white;
+}
+
