@@ -4,7 +4,7 @@ import "./table.css";
 export default function Table(props) {
   const data = props.data;
   const headings = Object.keys(data[0]);
-  const { newName, newUsername, newEmail, newPhone } = props.newData;
+  const { errors, newName, newUsername, newEmail, newPhone } = props.newData;
   return (
     <>
       <table>
@@ -37,51 +37,69 @@ export default function Table(props) {
                 <td>{ele.id}</td>
                 <td>
                   {ele.id === parseInt(props.editable) ? (
-                    <input
-                      type="text"
-                      id="newName"
-                      value={newName}
-                      required
-                      onChange={props.handleChange}
-                    />
+                    <>
+                      <input
+                        type="text"
+                        id="newName"
+                        value={newName}
+                        required
+                        onChange={props.handleChange}
+                      />
+                      <br />
+                      <span style={spanStyle}>{errors.newName}</span>
+                    </>
                   ) : (
                     ele.name
                   )}
                 </td>
                 <td>
                   {ele.id === parseInt(props.editable) ? (
-                    <input
-                      type="text"
-                      id="newUsername"
-                      value={newUsername}
-                      required
-                      onChange={props.handleChange}
-                    />
+                    <>
+                      {" "}
+                      <input
+                        type="text"
+                        id="newUsername"
+                        value={newUsername}
+                        required
+                        onChange={props.handleChange}
+                      />
+                      <br />
+                      <span style={spanStyle}>{errors.newUsername}</span>
+                    </>
                   ) : (
                     ele.username
                   )}
                 </td>
                 <td>
                   {ele.id === parseInt(props.editable) ? (
-                    <input
-                      type="text"
-                      id="newEmail"
-                      value={newEmail}
-                      required
-                      onChange={props.handleChange}
-                    />
+                    <>
+                      {" "}
+                      <input
+                        type="text"
+                        id="newEmail"
+                        value={newEmail}
+                        required
+                        onChange={props.handleChange}
+                      />
+                      <br />
+                      <span style={spanStyle}>{errors.newEmail}</span>
+                    </>
                   ) : (
                     ele.email
                   )}
                 </td>
                 <td>
                   {ele.id === parseInt(props.editable) ? (
-                    <input
-                      type="text"
-                      id="newPhone"
-                      value={newPhone}
-                      onChange={props.handleChange}
-                    />
+                    <>
+                      <input
+                        type="text"
+                        id="newPhone"
+                        value={newPhone}
+                        onChange={props.handleChange}
+                      />
+                      <br />
+                      <span style={spanStyle}>{errors.newPhone}</span>
+                    </>
                   ) : (
                     ele.phone
                   )}
@@ -136,3 +154,9 @@ export default function Table(props) {
     </>
   );
 }
+const spanStyle = {
+  position: "relative",
+  left: "10px",
+  color: "red",
+  fontSize: "0.8em"
+};

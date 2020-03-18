@@ -8,12 +8,15 @@ export default class ApiTest extends React.Component {
     super(props);
     this.state = {
       data: "",
+      errors: {},
       name: "",
       username: "",
       email: "",
       phone: "",
-      editable: ""
+      editable: "",
+      addData: false
     };
+    this.sort = false;
   }
 
   componentDidMount() {
@@ -29,17 +32,40 @@ export default class ApiTest extends React.Component {
   }
 
   handleChange = e => {
+    let { errors } = this.state;
     if (e.target.id === "name" || e.target.id === "newName") {
-      if (e.target.value.match(/^[A-Za-z]+$/)) {
+      if (/[^A-Za-z]+$/.test(e.target.value) || e.target.value.length < 2) {
+        errors[e.target.id] = "alphabets only min length 2";
+        this.setState({ errors });
+      } else {
+        delete errors[e.target.id];
       }
-    } else if (e.target.id === "username") {
-    } else if (e.target.id === "email") {
+    } else if (e.target.id === "username" || e.target.id === "newUsername") {
+      if (e.target.id === "newUsername" && e.target.value.length < 6) {
+        errors[e.target.id] = "minimum 6 characters";
+        this.setState({ errors });
+      } else {
+        delete errors[e.target.id];
+      }
+    } else if (e.target.id === "email" || e.target.id === "newEmail") {
       if (
-        e.target.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)
+        !e.target.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)
       ) {
+        errors[e.target.id] = "example@yahoo.com";
+        this.setState({ errors });
+      } else {
+        delete errors[e.target.id];
       }
     } else if (e.target.id === "phone" || e.target.id === "newPhone") {
-      if (e.target.value.match(/^[-+]?[0-9]+$/)) {
+      if (
+        /[^-+]?[^0-9]+$/.test(e.target.value) ||
+        e.target.value.length < 8 ||
+        e.target.value.length > 16
+      ) {
+        errors[e.target.id] = "invalid format";
+        this.setState({ errors });
+      } else {
+        delete errors[e.target.id];
       }
     }
     this.setState({
@@ -49,6 +75,10 @@ export default class ApiTest extends React.Component {
 
   handleSubmit = e => {
     e.preventDefault();
+    if (Object.keys(this.state.errors).length) {
+      alert("check errors");
+      return;
+    }
     /******** api for data insertion ****************************/
     fetch("https://jsonplaceholder.typicode.com/users", {
       method: "POST",
@@ -70,26 +100,22 @@ export default class ApiTest extends React.Component {
       .catch(console.log);
     /*******************************************************/
     let { data } = this.state;
-    data.splice(
-      data.findIndex(
-        ele =>
-          ele.id ===
-          data.reduce((prev, current) =>
-            prev.id > current.id ? prev : current
-          ).id
-      ),
-      0,
-      {
-        id:
-          data.reduce((prev, current) =>
-            prev.id > current.id ? prev : current
-          ).id + 1,
-        name: this.state.name,
-        username: this.state.username,
-        email: this.state.email,
-        phone: this.state.phone
-      }
+    let pos = data.findIndex(
+      ele =>
+        ele.id ===
+        data.reduce((prev, current) => (prev.id > current.id ? prev : current))
+          .id
     );
+    this.sort ? (pos = pos + 0) : (pos = pos + 1);
+    data.splice(pos, 0, {
+      id:
+        data.reduce((prev, current) => (prev.id > current.id ? prev : current))
+          .id + 1,
+      name: this.state.name,
+      username: this.state.username,
+      email: this.state.email,
+      phone: this.state.phone
+    });
     this.setState({
       name: "",
       username: "",
@@ -101,6 +127,10 @@ export default class ApiTest extends React.Component {
   handleEdit = e => {
     let { data } = this.state;
     let pos = data.findIndex(ele => ele.id === Number(e.target.id));
+    if (e.target.value === "save" && Object.keys(this.state.errors).length) {
+      alert("check errors");
+      return;
+    }
     if (e.target.value === "save" && window.confirm("confirm updation?")) {
       if (
         this.state.newName === "" ||
@@ -143,7 +173,12 @@ export default class ApiTest extends React.Component {
         editable: ""
       });
     } else if (e.target.value === "X") {
-      this.setState({ editable: "" });
+      const { errors } = this.state;
+      delete errors.newName;
+      delete errors.newUsername;
+      delete errors.newEmail;
+      delete errors.newPhone;
+      this.setState({ errors, editable: "" });
     } else {
       this.setState({
         newName: data[pos].name,
@@ -175,8 +210,29 @@ export default class ApiTest extends React.Component {
     }
   };
 
+  handleForm = e => {
+    if (e.target.id === "x") {
+      const { errors } = this.state;
+      delete errors.name;
+      delete errors.username;
+      delete errors.email;
+      delete errors.phone;
+      this.setState({
+        errors,
+        name: "",
+        username: "",
+        email: "",
+        phone: "",
+        addData: false
+      });
+    } else {
+      this.setState({ addData: true });
+    }
+  };
+
   handleSort = e => {
     let { data } = this.state;
+    this.sort = !this.sort;
     data.reverse();
     this.setState({
       data
@@ -194,14 +250,24 @@ export default class ApiTest extends React.Component {
         <header>
           <h3 style={{ textAlign: "center" }}>Users List</h3>
         </header>
-        <div className="addData">
-          <InputForm
-            headings={headings}
-            handleChange={this.handleChange}
-            handleSubmit={this.handleSubmit}
-            data={this.state}
-          />
+        <div className="addData" style={{ textAlign: "center" }}>
+          <button
+            id={this.state.addData ? "x" : "Add Data"}
+            onClick={this.handleForm}
+          >
+            {this.state.addData ? "x" : "Add Data"}
+          </button>
         </div>
+        {this.state.addData && (
+          <div className="addData">
+            <InputForm
+              headings={headings}
+              handleChange={this.handleChange}
+              handleSubmit={this.handleSubmit}
+              data={this.state}
+            />
+          </div>
+        )}
         {this.state.data.length > 0 ? (
           <div className="UsersTable">
             <Table
